@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollution Detection Dashboard</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/Hackathon2/pollution.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Pollution Detection using GIS + Satellite Imagery</h1>
+        <p>Predict • Prevent • Protect</p>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <h3>Filters</h3>
+            <label>Search Region:</label>
+            <input type="text" id="regionSearch" placeholder="Enter city or region">
+            <button id="searchBtn">Search</button>
+
+
+            <label">Date Range:</label>
+            <input type="date"  class="date">
+            <input type="date"  class="date">
+            
+
+            <h3>Layers</h3>
+            <label><input type="checkbox" checked> PM2.5</label><br>
+            <label><input type="checkbox" checked> NO2</label><br>
+            <label><input type="checkbox"> Water Quality</label><br>
+            <label><input type="checkbox" id="cropToggle"> Crop Burning</label>
+        </div>
+
+        <!-- Map -->
+        <div id="map"></div>
+
+        <!-- Right Sidebar -->
+        <div class="stats">
+            <div class="stat-card">
+                <h4>PM2.5</h4>
+                <p>85 µg/m³</p>
+            </div>
+            <div class="stat-card">
+                <h4>NO2</h4>
+                <p>45 µg/m³</p>
+            </div>
+            <div class="stat-card">
+                <h4>Water Quality</h4>
+                <p>Moderate</p>
+            </div>
+            <div class="stat-card">
+                <h4>Forecast</h4>
+                <p>High Risk Tomorrow</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts">
+        <div class="chart-container"><canvas id="lineChart"></canvas></div>
+        <div class="chart-container"><canvas id="barChart"></canvas></div>
+        <div class="chart-container"><canvas id="pieChart"></canvas></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alerts">⚠️ High pollution expected in Delhi tomorrow. Stay safe!</div>
+
+    <!-- Footer -->
+    <footer>Made by TechLogs • Hackathon 2025 • Powered by Sentinel-5P & MODIS</footer>
+
+    <!-- JS Libraries -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom JS -->
+    <script src="/Hackathon2/scriptpo.js"></script>
+</body>
+
+</html>

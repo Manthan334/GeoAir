@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [77.216721, 28.644800] },
+      "properties": {
+        "pollutant": "Turbidity",
+        "value": 45,
+        "unit": "NTU",
+        "sample_date": "2025-08-15"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [72.877426, 19.076090] },
+      "properties": {
+        "pollutant": "Nitrate",
+        "value": 7.5,
+        "unit": "mg/L",
+        "sample_date": "2025-08-16"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [88.363044, 22.572646] },
+      "properties": {
+        "pollutant": "Dissolved Oxygen",
+        "value": 3.2,
+        "unit": "mg/L",
+        "sample_date": "2025-08-14"
+      }
+    }
+  ]
+}

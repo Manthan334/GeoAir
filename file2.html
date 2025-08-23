@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Right Sidebar -->
+    <div class="stats">
+        <div class="stat-card">
+            <h4>PM2.5</h4>
+            <p>85 µg/m³</p>
+        </div>
+        <div class="stat-card">
+            <h4>NO2</h4>
+            <p>45 µg/m³</p>
+        </div>
+        <div class="stat-card">
+            <h4>Water Quality</h4>
+            <p>Moderate</p>
+        </div>
+        <div class="stat-card">
+            <h4>Forecast</h4>
+            <p>High Risk Tomorrow</p>
+        </div>
+    </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts">
+        <div class="chart-container"><canvas id="lineChart"></canvas></div>
+        <div class="chart-container"><canvas id="barChart"></canvas></div>
+        <div class="chart-container"><canvas id="pieChart"></canvas></div>
+    </div>
+
+     <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>

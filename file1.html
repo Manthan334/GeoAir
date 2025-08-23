@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Pollution Detection using GIS + Satellite Imagery</h1>
+        <p>Predict • Prevent • Protect</p>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <h3>Filters</h3>
+            <label>Search Region:</label>
+            <input type="text" id="regionSearch" placeholder="Enter city or region">
+            <button id="searchBtn">Search</button>
+
+
+            <label>Date Range:</label>
+            <input type="date">
+            <input type="date">
+
+            <h3>Layers</h3>
+            <label><input type="checkbox" checked> PM2.5</label><br>
+            <label><input type="checkbox" checked> NO2</label><br>
+            <label><input type="checkbox"> Water Quality</label><br>
+            <label><input type="checkbox" id="cropToggle"> Crop Burning</label>
+        </div>
+
+         <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>

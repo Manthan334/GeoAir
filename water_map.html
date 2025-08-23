@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PolluMap – Water Pollution Dashboard</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body { margin:0; padding:0; }
+    #map { height: 100vh; width: 100%; }
+    #sidebar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+      min-width: 180px;
+    }
+    #sidebar button, #sidebar select {
+      margin-top: 6px;
+      padding: 6px 8px;
+      border: none;
+      border-radius: 5px;
+      background: #2b7cff;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #sidebar button:hover { background: #105fd6; }
+    #sidebar small { display:block; margin-top:6px; color:#444; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="sidebar">
+    <h3>PolluMap — Water</h3>
+    <p style="margin:0;">Visualize water pollution (points + heatmap)</p>
+
+    <!-- pollutant filter -->
+    <select id="pollutantSelect">
+      <option value="All">All pollutants</option>
+      <option value="Turbidity">Turbidity</option>
+      <option value="Nitrate">Nitrate</option>
+      <option value="Dissolved Oxygen">Dissolved Oxygen</option>
+    </select>
+
+    <button id="toggleHeatmap">Toggle Heatmap</button>
+    <small>Tip: save the example GeoJSON as <code>water_pollution_last7days.geojson</code> beside this file.</small>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Heatmap plugin (same plugin you used) -->
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+  <script>
+    // ===== 1) Initialize map centered on India =====
+    var map = L.map('map').setView([20, 78], 5);
+
+    // Add base tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Layers we'll create
+    let waterPointLayer;   // GeoJSON circle markers
+    let waterHeatLayer;    // heatmap
+
+    // Helper: clamp value between min and max
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    // ===== 2) Convert pollutant measurement to a normalized intensity (0..1) =====
+    function getIntensity(pollutant, value) {
+      if (value === null || value === undefined || isNaN(value)) return 0.0;
+
+      pollutant = pollutant || "Unknown";
+      value = Number(value);
+
+      if (pollutant === "Turbidity") {
+        const MAX = 100;
+        return clamp(value / MAX, 0, 1);
+      }
+
+      if (pollutant === "Nitrate") {
+        const MAX = 20;
+        return clamp(value / MAX, 0, 1);
+      }
+
+      if (pollutant === "Dissolved Oxygen") {
+        const MAX = 14;
+        const normalized = clamp(value / MAX, 0, 1);
+        return clamp(1 - normalized, 0, 1); // invert
+      }
+
+      const DEFAULT_MAX = 100;
+      return clamp(value / DEFAULT_MAX, 0, 1);
+    }
+
+    // Helper: color from intensity (0 -> green, 1 -> red)
+    function getColorForIntensity(intensity) {
+      const hue = (1 - intensity) * 120; // 120 (green) to 0 (red)
+      return `hsl(${hue}, 75%, 45%)`;
+    }
+
+    // ===== 3) Load GeoJSON (local file) and build both point layer + heatmap =====
+    fetch("water_pollution_last7days.geojson")
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.features) {
+          alert("GeoJSON looks invalid or empty.");
+          return;
+        }
+
+        // Build circle-marker layer (dots)
+        waterPointLayer = L.geoJSON(data, {
+          pointToLayer: (feature, latlng) => {
+            const props = feature.properties || {};
+            const pollutant = props.pollutant || "Unknown";
+            const value = Number(props.value);
+
+            const intensity = getIntensity(pollutant, value);
+            const radius = 6 + intensity * 12;
+
+            return L.circleMarker(latlng, {
+              radius: radius,
+              fillColor: getColorForIntensity(intensity),
+              color: "#222",
+              weight: 0.6,
+              opacity: 1,
+              fillOpacity: 0.85
+            });
+          },
+          onEachFeature: (feature, layer) => {
+            const p = feature.properties || {};
+            const pollutant = p.pollutant || "Unknown";
+            const value = p.value || "N/A";
+            const unit = p.unit || "";
+            const date = p.sample_date || "N/A";
+            const lat = feature.geometry.coordinates[1].toFixed(5);
+            const lon = feature.geometry.coordinates[0].toFixed(5);
+            const intensity = getIntensity(pollutant, Number(p.value));
+
+            layer.bindPopup(`
+              <b>💧 Water sample</b><br>
+              Pollutant: ${pollutant}<br>
+              Value: ${value} ${unit}<br>
+              Date: ${date}<br>
+              Lat: ${lat} Lon: ${lon}<br>
+              Severity: ${(intensity*100).toFixed(0)}%
+            `);
+          }
+        }).addTo(map);
+
+        // Build heatmap points
+        const heatPoints = data.features.map(f => {
+          const coords = f.geometry.coordinates;
+          const props = f.properties || {};
+          const pollutant = props.pollutant || "Unknown";
+          const value = Number(props.value);
+          const intensity = getIntensity(pollutant, value);
+
+          return [coords[1], coords[0], intensity];
+        });
+
+        waterHeatLayer = L.heatLayer(heatPoints, {
+          radius: 25,
+          blur: 15,
+          maxZoom: 10
+        });
+      })
+      .catch(err => {
+        console.error("Failed to load GeoJSON:", err);
+        alert("Could not load water_pollution_last7days.geojson.");
+      });
+
+    // ===== 4) Toggle button =====
+    document.getElementById("toggleHeatmap").addEventListener("click", () => {
+      if (!waterHeatLayer || !waterPointLayer) {
+        alert("Map layers not ready yet.");
+        return;
+      }
+      if (map.hasLayer(waterHeatLayer)) {
+        map.removeLayer(waterHeatLayer);
+        waterPointLayer.addTo(map);
+      } else {
+        map.removeLayer(waterPointLayer);
+        waterHeatLayer.addTo(map);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Water Pollution Detection</title>
+  <link rel="stylesheet" href="water.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>🌊 Water Pollution Detection Dashboard</h1>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Filters</h2>
+      <label for="pollutant">Select Pollutant</label>
+      <select id="pollutant">
+        <option value="Nitrate">Nitrate</option>
+        <option value="Phosphate">Phosphate</option>
+        <option value="BOD">BOD</option>
+        <option value="COD">COD</option>
+      </select>
+
+      <label>
+        <input type="checkbox" id="industries" checked>
+        Show Industries
+      </label>
+
+      <button id="downloadBtn">Download Report</button>
+    </div>
+
+    <!-- Map Section -->
+    <div id="map"></div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <h2>Insights</h2>
+      <div class="card blue">
+        <h3>Water Quality Index</h3>
+        <p id="wqi">Poor</p>
+      </div>
+      <div class="card green">
+        <h3>Nitrate Level</h3>
+        <p id="nitrate">45 mg/L (Above Safe Limit)</p>
+      </div>
+
+      <canvas id="trendChart"></canvas>
+      <canvas id="sourceChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Script -->
+  <script src="scriptw.js"></script>
+</body>
+</html>
